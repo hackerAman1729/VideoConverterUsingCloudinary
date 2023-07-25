@@ -26,129 +26,71 @@
     #output {
       margin-top: 20px;
     }
+    .rotate-buttons {
+      display: flex;
+      justify-content: space-between;
+      width: 50%;
+      margin: 10px auto;
+    }
+    button:active {
+      border: 2px solid #000;
+    }
   </style>
 </head>
 <body>
   <div id="app">
     <h1>Video Transformer</h1>
     <input id="input" type="text" placeholder="Enter video URL">
-    <button onclick="transform()">Submit</button>
-    <button onclick="location.reload()">Refresh</button>
+    <div class="rotate-buttons">
+      <div>
+        <h2>Anticlockwise</h2>
+        <button onclick="transform(-90)">Rotate 90°</button>
+        <button onclick="transform(-180)">Rotate 180°</button>
+        <button onclick="transform(-270)">Rotate 270°</button>
+      </div>
+      <div>
+        <h2>Clockwise</h2>
+        <button onclick="transform(90)">Rotate 90°</button>
+        <button onclick="transform(180)">Rotate 180°</button>
+        <button onclick="transform(270)">Rotate 270°</button>
+      </div>
+    </div>
     <img id="loading" src="https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/b6e0b072897469.5bf6e79950d23.gif" style="display: none; width: 300px;">
     <div id="output"></div>
   </div>
   <script>
-    async function transform() {
+    async function transform(angle) {
       const url = document.getElementById('input').value;
       document.getElementById('loading').style.display = 'block';
       const response = await fetch('/transform', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url })
+        body: JSON.stringify({ url, angle })
       });
       const data = await response.json();
       document.getElementById('output').innerHTML = `
-        <div style="display: flex; justify-content: space-around;">
+        <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
+          <video width="320" height="240" controls>
+            <source src="${data.transformedUrl}" type="video/mp4">
+          </video>
+          <input id="transformedUrl" type="text" value="${data.transformedUrl}" readonly>
           <div>
-            <h2>Anticlockwise</h2>
-            <video width="320" height="240" controls>
-              <source src="${data.transformedUrlAnticlockwise}" type="video/mp4">
-            </video>
-            <input id="transformedUrlAnticlockwise" type="text" value="${data.transformedUrlAnticlockwise}" readonly>
-            <button onclick="window.open(document.getElementById('transformedUrlAnticlockwise').value)">Play in new tab</button>
-            <button onclick="copyToClipboard('transformedUrlAnticlockwise')">Copy</button>
-          </div>
-          <div>
-            <h2>Clockwise</h2>
-            <video width="320" height="240" controls>
-              <source src="${data.transformedUrlClockwise}" type="video/mp4">
-            </video>
-            <input id="transformedUrlClockwise" type="text" value="${data.transformedUrlClockwise}" readonly>
-            <button onclick="window.open(document.getElementById('transformedUrlClockwise').value)">Play in new tab</button>
-            <button onclick="copyToClipboard('transformedUrlClockwise')">Copy</button>
+            <button onclick="window.open(document.getElementById('transformedUrl').value)">Play in new tab</button>
+            <button onclick="copyToClipboard()">Copy</button>
           </div>
         </div>
       `;
       document.getElementById('loading').style.display = 'none';
     }
 
-    function copyToClipboard(id) {
-      const copyText = document.getElementById(id);
+    function copyToClipboard() {
+      const copyText = document.getElementById("transformedUrl");
       copyText.select();
       copyText.setSelectionRange(0, 99999);
       document.execCommand("copy");
     }
   </script>
 </body>
-
 </html>
 
 
-
-
-
-
-
-
-<!-- <!DOCTYPE html>
-<html>
-<head>
-  <title>Video Transformer</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f0f0f0;
-    }
-    #app {
-      text-align: center;
-    }
-    input, button {
-      padding: 10px;
-      font-size: 16px;
-    }
-    #output {
-      margin-top: 20px;
-    }
-
-
-  </style>
-</head>
-<body>
-  <div id="app">
-    <h1>Video Transformer</h1>
-    <input id="input" type="text" placeholder="Enter video URL">
-    <button onclick="transform()">Submit</button>
-    <button onclick="location.reload()">Refresh</button>
-    <div id="output"></div>
-  </div>
-  <script>
-    async function transform() {
-      const url = document.getElementById('input').value;
-      const response = await fetch('/transform', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url })
-      });
-      const data = await response.json();
-      document.getElementById('output').innerHTML = `
-        <input id="transformedUrl" type="text" value="${data.transformedUrl}" readonly>
-        <button onclick="window.open(document.getElementById('transformedUrl').value)">Play in new tab</button>
-        <button onclick="copyToClipboard()">Copy</button>
-      `;
-    }
-
-    function copyToClipboard() {
-      const copyText = document.getElementById("transformedUrl");
-      copyText.select();
-      copyText.setSelectionRange(0, 99999); // For mobile devices
-      document.execCommand("copy");
-    }
-  </script>
-</body>
-</html> -->
