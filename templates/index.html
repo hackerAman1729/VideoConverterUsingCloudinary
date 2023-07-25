@@ -40,7 +40,7 @@
   <script>
     async function transform() {
       const url = document.getElementById('input').value;
-      document.getElementById('loading').style.display = 'block';  // Show the loading GIF
+      document.getElementById('loading').style.display = 'block';
       const response = await fetch('/transform', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -48,22 +48,43 @@
       });
       const data = await response.json();
       document.getElementById('output').innerHTML = `
-        <input id="transformedUrl" type="text" value="${data.transformedUrl}" readonly>
-        <button onclick="window.open(document.getElementById('transformedUrl').value)">Play in new tab</button>
-        <button onclick="copyToClipboard()">Copy</button>
+        <div style="display: flex; justify-content: space-around;">
+          <div>
+            <h2>Anticlockwise</h2>
+            <video width="320" height="240" controls>
+              <source src="${data.transformedUrlAnticlockwise}" type="video/mp4">
+            </video>
+            <input id="transformedUrlAnticlockwise" type="text" value="${data.transformedUrlAnticlockwise}" readonly>
+            <button onclick="window.open(document.getElementById('transformedUrlAnticlockwise').value)">Play in new tab</button>
+            <button onclick="copyToClipboard('transformedUrlAnticlockwise')">Copy</button>
+          </div>
+          <div>
+            <h2>Clockwise</h2>
+            <video width="320" height="240" controls>
+              <source src="${data.transformedUrlClockwise}" type="video/mp4">
+            </video>
+            <input id="transformedUrlClockwise" type="text" value="${data.transformedUrlClockwise}" readonly>
+            <button onclick="window.open(document.getElementById('transformedUrlClockwise').value)">Play in new tab</button>
+            <button onclick="copyToClipboard('transformedUrlClockwise')">Copy</button>
+          </div>
+        </div>
       `;
-      document.getElementById('loading').style.display = 'none';  // Hide the loading GIF
+      document.getElementById('loading').style.display = 'none';
     }
 
-    function copyToClipboard() {
-      const copyText = document.getElementById("transformedUrl");
+    function copyToClipboard(id) {
+      const copyText = document.getElementById(id);
       copyText.select();
-      copyText.setSelectionRange(0, 99999); // For mobile devices
+      copyText.setSelectionRange(0, 99999);
       document.execCommand("copy");
     }
   </script>
 </body>
+
 </html>
+
+
+
 
 
 
