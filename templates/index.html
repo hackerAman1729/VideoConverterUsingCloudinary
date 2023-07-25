@@ -1,0 +1,133 @@
+<!-- templates/index.html -->
+
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Video Transformer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+    #app {
+      text-align: center;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+    }
+    #output {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>Video Transformer</h1>
+    <input id="input" type="text" placeholder="Enter video URL">
+    <button onclick="transform()">Submit</button>
+    <button onclick="location.reload()">Refresh</button>
+    <img id="loading" src="https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/b6e0b072897469.5bf6e79950d23.gif" style="display: none; width: 300px;">
+    <div id="output"></div>
+  </div>
+  <script>
+    async function transform() {
+      const url = document.getElementById('input').value;
+      document.getElementById('loading').style.display = 'block';  // Show the loading GIF
+      const response = await fetch('/transform', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+      const data = await response.json();
+      document.getElementById('output').innerHTML = `
+        <input id="transformedUrl" type="text" value="${data.transformedUrl}" readonly>
+        <button onclick="window.open(document.getElementById('transformedUrl').value)">Play in new tab</button>
+        <button onclick="copyToClipboard()">Copy</button>
+      `;
+      document.getElementById('loading').style.display = 'none';  // Hide the loading GIF
+    }
+
+    function copyToClipboard() {
+      const copyText = document.getElementById("transformedUrl");
+      copyText.select();
+      copyText.setSelectionRange(0, 99999); // For mobile devices
+      document.execCommand("copy");
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+<!-- <!DOCTYPE html>
+<html>
+<head>
+  <title>Video Transformer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+    }
+    #app {
+      text-align: center;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+    }
+    #output {
+      margin-top: 20px;
+    }
+
+
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>Video Transformer</h1>
+    <input id="input" type="text" placeholder="Enter video URL">
+    <button onclick="transform()">Submit</button>
+    <button onclick="location.reload()">Refresh</button>
+    <div id="output"></div>
+  </div>
+  <script>
+    async function transform() {
+      const url = document.getElementById('input').value;
+      const response = await fetch('/transform', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+      const data = await response.json();
+      document.getElementById('output').innerHTML = `
+        <input id="transformedUrl" type="text" value="${data.transformedUrl}" readonly>
+        <button onclick="window.open(document.getElementById('transformedUrl').value)">Play in new tab</button>
+        <button onclick="copyToClipboard()">Copy</button>
+      `;
+    }
+
+    function copyToClipboard() {
+      const copyText = document.getElementById("transformedUrl");
+      copyText.select();
+      copyText.setSelectionRange(0, 99999); // For mobile devices
+      document.execCommand("copy");
+    }
+  </script>
+</body>
+</html> -->
