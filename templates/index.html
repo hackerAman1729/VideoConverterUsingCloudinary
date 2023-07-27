@@ -1,6 +1,4 @@
 <!-- templates/index.html -->
-
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,8 +26,8 @@
     }
     .rotate-buttons {
       display: flex;
-      justify-content: space-between;
-      width: 50%;
+      justify-content: space-around;
+      width: 80%;
       margin: 10px auto;
     }
     button:active {
@@ -54,18 +52,22 @@
         <button onclick="transform(180)">Rotate 180°</button>
         <button onclick="transform(270)">Rotate 270°</button>
       </div>
+      <div>
+        <h2>Flip</h2>
+        <button onclick="transform(0, true)">Flip</button>
+      </div>
     </div>
     <img id="loading" src="https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/b6e0b072897469.5bf6e79950d23.gif" style="display: none; width: 300px;">
     <div id="output"></div>
   </div>
   <script>
-    async function transform(angle) {
+    async function transform(angle, flip = false) {
       const url = document.getElementById('input').value;
       document.getElementById('loading').style.display = 'block';
       const response = await fetch('/transform', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, angle })
+        body: JSON.stringify({ url, angle, flip })
       });
       const data = await response.json();
       document.getElementById('output').innerHTML = `
@@ -92,5 +94,3 @@
   </script>
 </body>
 </html>
-
-

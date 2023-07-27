@@ -15,6 +15,7 @@ def home():
 def transform():
     url = request.json['url']
     angle = request.json.get('angle', 0)
+    flip = request.json.get('flip', False)
 
     cloud_name = os.getenv('CLOUDINARY_CLOUD_NAME')
     api_key = os.getenv('CLOUDINARY_API_KEY')
@@ -27,8 +28,13 @@ def transform():
     )
 
     try:
-        # Use the provided angle for transformation
-        result = cloudinary.uploader.upload(url, resource_type="video", angle=angle)
+        transformations = []
+        if flip:
+            transformations.append({"angle": "hflip"})
+        if angle != 0:
+            transformations.append({"angle": angle})
+
+        result = cloudinary.uploader.upload(url, resource_type="video", transformation=transformations)
 
         https_url = result['url'].replace("http://", "https://")  # Replace http with https
         return {'transformedUrl': https_url}
@@ -38,4 +44,3 @@ def transform():
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', port=81)
-
